@@ -40,46 +40,48 @@ def make_records(filepath):
         return records 
 '''treat all of the different attributes for a single row as a list and set it to the attrs attribute in record.  
 Then use the "Assessment" column to assign the "actual_label" attr in Record.'''
+def main():
+    file = 'sufficiently_noisy_data-1.csv'
+    file_check = 'checking_data.csv'
+    actual_file = 'ICE6TrainingDataFile.csv'
+    record_list = make_records(actual_file)
+    strategy = CollectiveImpurityEntropy()
+    #Then make an object of TreeNode called root that takes in that list of records and the PIVOTS data structure.
+    root = TreeNode(record_list,PIVOTS.copy())
+    root.grow_tree(strategy)
+    test_record_list = make_records('test_data.csv')
+    rec = root.classify_records(test_record_list)
 
-file = 'sufficiently_noisy_data-1.csv'
-file_check = 'checking_data.csv'
-actual_file = 'ICE6TrainingDataFile.csv'
-record_list = make_records(actual_file)
-strategy = CollectiveImpurityEntropy()
-#Then make an object of TreeNode called root that takes in that list of records and the PIVOTS data structure.
-root = TreeNode(record_list,PIVOTS.copy())
-root.grow_tree(strategy)
-test_record_list = make_records('test_data.csv')
-rec = root.classify_records(test_record_list)
+    # accuracy calculation
+    acc = sum([1 for r in rec if r.actual_label == r.predicted_label])/len(rec)
+    print(f"{acc:.3f}")
 
-# accuracy calculation
-acc = sum([1 for r in rec if r.actual_label == r.predicted_label])/len(rec)
-print(f"{acc:.3f}")
+    correct_count = 0
+    incorrect_count = 0
+    total_count = len(rec)
 
-correct_count = 0
-incorrect_count = 0
-total_count = len(rec)
+    for r in rec:
+        print(f"Record ID: {r.attrs.get('ID', 'Unknown')}, Actual: {r.actual_label}, Predicted: {r.predicted_label}")
+        if r.actual_label == r.predicted_label:
+            correct_count += 1
+        else:
+            incorrect_count += 1
+            print(f" -- Mismatch: Actual = {r.actual_label}, Predicted = {r.predicted_label}")
 
-for r in rec:
-    print(f"Record ID: {r.attrs.get('ID', 'Unknown')}, Actual: {r.actual_label}, Predicted: {r.predicted_label}")
-    if r.actual_label == r.predicted_label:
-        correct_count += 1
-    else:
-        incorrect_count += 1
-        print(f" -- Mismatch: Actual = {r.actual_label}, Predicted = {r.predicted_label}")
+    acc = correct_count / total_count
+    print(correct_count)
+    print(incorrect_count)
+    print(f"\nTotal correct: {correct_count}/{total_count}")
+    print(f"Calculated Accuracy: {acc:.3f}")
+    '''
+    age_mean = statistics.mean(int(r.attrs["Age"]) for r in record_list)
 
-acc = correct_count / total_count
-print(correct_count)
-print(incorrect_count)
-print(f"\nTotal correct: {correct_count}/{total_count}")
-print(f"Calculated Accuracy: {acc:.3f}")
-'''
-age_mean = statistics.mean(int(r.attrs["Age"]) for r in record_list)
+    blood_mean = statistics.mean(int(r.attrs['SystolicBloodPressure']) for r in record_list)
 
-blood_mean = statistics.mean(int(r.attrs['SystolicBloodPressure']) for r in record_list)
+    cholestrol_mean =  statistics.mean(int(r.attrs['TotalCholesterol']) for r in record_list)
 
-cholestrol_mean =  statistics.mean(int(r.attrs['TotalCholesterol']) for r in record_list)
-
-HDL_mean = statistics.mean(int(r.attrs['HDLcholesterol']) for r in record_list)
-print(f"Average Col data: age = {age_mean:.1f} , blood = {blood_mean:.1f}, total chol = {cholestrol_mean:.1f}, HDL = {HDL_mean:.1f} ")
-'''
+    HDL_mean = statistics.mean(int(r.attrs['HDLcholesterol']) for r in record_list)
+    print(f"Average Col data: age = {age_mean:.1f} , blood = {blood_mean:.1f}, total chol = {cholestrol_mean:.1f}, HDL = {HDL_mean:.1f} ")
+    '''
+if __name__ == "__main__":
+    main()
