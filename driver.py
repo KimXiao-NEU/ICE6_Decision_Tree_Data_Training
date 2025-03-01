@@ -54,9 +54,10 @@ rec = root.classify_records(test_record_list)
 
 # accuracy calculation
 acc = sum([1 for r in rec if r.actual_label == r.predicted_label])/len(rec)
-print(acc)
-'''
+print(f"{acc:.3f}")
+
 correct_count = 0
+incorrect_count = 0
 total_count = len(rec)
 
 for r in rec:
@@ -64,12 +65,15 @@ for r in rec:
     if r.actual_label == r.predicted_label:
         correct_count += 1
     else:
+        incorrect_count += 1
         print(f" -- Mismatch: Actual = {r.actual_label}, Predicted = {r.predicted_label}")
 
 acc = correct_count / total_count
+print(correct_count)
+print(incorrect_count)
 print(f"\nTotal correct: {correct_count}/{total_count}")
 print(f"Calculated Accuracy: {acc:.3f}")
-
+'''
 age_mean = statistics.mean(int(r.attrs["Age"]) for r in record_list)
 
 blood_mean = statistics.mean(int(r.attrs['SystolicBloodPressure']) for r in record_list)

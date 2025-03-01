@@ -29,16 +29,16 @@ class TreeNode:
 
         
     def grow_tree(self, strategy, i = 0): # calculator which strategy
-        indent = "    " * i
-        print(f"Growing tree at depth {i} with {len(self.records_1d)} records")
-        print(f"  - Low Risk count: {self.low_count}")
-        print(f"  - High Risk count: {self.high_count}")
+        # indent = "    " * i
+        # print(f"Growing tree at depth {i} with {len(self.records_1d)} records")
+        # print(f"  - Low Risk count: {self.low_count}")
+        # print(f"  - High Risk count: {self.high_count}")
         
         if self.is_homogenous() or len(self.pivot_choices) == 0:
-            if self.high_count == 0 :
-                self.label_to_apply = 'Low Risk'     
-            if self.low_count == 0 or len(self.pivot_choices) == 0:
-                self.label_to_apply = 'High Risk'
+            if self.high_count > self.low_count :
+                self.label_to_apply = 'High Risk'     
+            else:
+                self.label_to_apply = 'Low Risk'
                 #print (f"{indent} Leaf Node --> {self.label_to_apply} ")
                 return       
         # are we done spliiting?
@@ -46,16 +46,16 @@ class TreeNode:
         if any(len(sublist) == 0 for sublist in partitions):
             #print(f"{indent}, Stopping recursion due to empty partition.")  
             return 
-        print(f"{indent} Splitting on: {self.best_label}")  
+        #print(f"{indent} Splitting on: {self.best_label}")  
         for sublist in partitions:
             #print(f"{indent} Branch {i+1} ({len(sublist)} records)")
             child = TreeNode(sublist,self.pivot_choices) # make a treenode
             self.children.append(child)# put that treenode into self.children
             #print("\t"*i, "recursing with: ",self.records_1d, i+1) #x-1 --> the popped labels
             child.grow_tree(strategy, i+1) # for each tree node in children
-        if i >= 20:
-            # print("\t"*i, "hit too many recursive steps- terminating")
-            return None
+        # if i >= 20:
+        #     # print("\t"*i, "hit too many recursive steps- terminating")
+        #     return None
 
     
     def find_best_partition(self,records_1d, strategy): #an object (of either InformationGain or CollectiveImpurity)
